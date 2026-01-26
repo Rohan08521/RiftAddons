@@ -1,4 +1,4 @@
-package com.example.mixins;
+package com.riftaddons.mixins;
 
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;

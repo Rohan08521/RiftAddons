@@ -1,11 +1,11 @@
 {
-  "id": "example_addon",
-  "name": "Example Addon",
+  "id": "riftaddons",
+  "name": "RiftAddons",
   "version": "1.0.0",
   "entrypoints": [
-    "com.example.ExampleAddon"
+    "com.riftaddons.RiftAddon"
   ],
   "mixins": [
-    "exampleaddon.mixins.json"
+    "riftaddons.mixins.json"
   ]
 }

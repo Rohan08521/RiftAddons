@@ -1,4 +1,4 @@
-package com.example.module
+package com.riftaddons.module
 
 import java.awt.Color
 import org.cobalt.api.module.Module
@@ -6,7 +6,7 @@ import org.cobalt.api.module.setting.impl.*
 import org.cobalt.api.util.helper.KeyBind
 import org.lwjgl.glfw.GLFW
 
-object ExampleModule : Module(
+object RiftModules : Module(
   name = "Example Module",
 ) {
 
