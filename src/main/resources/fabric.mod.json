@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "addon",
+  "id": "riftaddons",
   "version": "1.0.0",
   "name": "RiftAddons",
   "description": "Needed for addon loading in development.",
