@@ -341,7 +341,7 @@ object BerberisMacro : Module(
     val player = mc.player ?: return
     val level = mc.level ?: return
 
-    // Find nearby dropped item entities (dead bush items on ground)
+
     val nearbyItems = level.entitiesForRendering()
       .filterIsInstance<ItemEntity>()
       .filter { item ->
@@ -381,7 +381,7 @@ object BerberisMacro : Module(
     val dz = targetVec.z - playerPos.z
     val distance = sqrt(dx * dx + dy * dy + dz * dz)
 
-    // Create rotation but keep pitch at 0 (look straight ahead, not down)
+
     val yaw = Math.toDegrees(atan2(dz, dx)).toFloat() - 90f
     val rotation = Rotation(yaw, 0f)
 
