@@ -141,7 +141,7 @@ object BerberisMacro : Module(
         if (clock.passed()) {
           MouseUtils.leftClick()
           macroState = MacroState.PICKUP_DROPS
-          clock.schedule(500)
+          clock.schedule(100)
         }
       }
       MacroState.PICKUP_DROPS -> {
@@ -221,9 +221,9 @@ object BerberisMacro : Module(
       val alpha = 0.5f + 0.3f * sin(age * pulseSpeed)
 
       val color = if (pos == targetBerberis) {
-        Color(255, 0, 255, (alpha * 255).toInt()) // Magenta for target
+        Color(255, 0, 255, (alpha * 255).toInt())
       } else {
-        Color(255, 255, 0, (alpha * 255).toInt()) // Yellow for others
+        Color(255, 255, 0, (alpha * 255).toInt())
       }
 
       val box = AABB(
@@ -246,7 +246,7 @@ object BerberisMacro : Module(
       val itemPos = item.position()
       val pulseSpeed = 0.004f
       val alpha = 0.6f + 0.4f * sin(currentTime * pulseSpeed)
-      val color = Color(0, 255, 0, (alpha * 255).toInt()) // Green
+      val color = Color(0, 255, 0, (alpha * 255).toInt())
 
       val box = AABB(
         itemPos.x - 0.25, itemPos.y - 0.25, itemPos.z - 0.25,
@@ -266,12 +266,12 @@ object BerberisMacro : Module(
       val playerPos = player.position()
 
       val stateColor = when (macroState) {
-        MacroState.SWAP_TO_WAND -> Color(200, 200, 200, 100) // White
-        MacroState.WALK_TO_BERBERY -> Color(0, 200, 255, 100) // Cyan
-        MacroState.BREAK_BERBERY -> Color(255, 100, 0, 150) // Orange
-        MacroState.PICKUP_DROPS -> Color(0, 255, 100, 150) // Bright Green
-        MacroState.RESETTING -> Color(255, 255, 0, 100) // Yellow
-        MacroState.IDLE -> Color(100, 100, 100, 80) // Gray
+        MacroState.SWAP_TO_WAND -> Color(200, 200, 200, 100)
+        MacroState.WALK_TO_BERBERY -> Color(0, 200, 255, 100)
+        MacroState.BREAK_BERBERY -> Color(255, 100, 0, 150)
+        MacroState.PICKUP_DROPS -> Color(0, 255, 100, 150)
+        MacroState.RESETTING -> Color(255, 255, 0, 100)
+        MacroState.IDLE -> Color(100, 100, 100, 80)
       }
 
 
@@ -383,7 +383,7 @@ object BerberisMacro : Module(
 
 
     val yaw = Math.toDegrees(atan2(dz, dx)).toFloat() - 90f
-    val rotation = Rotation(yaw, 0f)
+    val rotation = Rotation(yaw, 30f)
 
     if (!RotationExecutor.isRotating()) {
       RotationExecutor.rotateTo(rotation, TimedEaseStrategy(EasingType.LINEAR, EasingType.LINEAR, 100))

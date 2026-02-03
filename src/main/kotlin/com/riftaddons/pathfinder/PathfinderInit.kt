@@ -9,12 +9,10 @@ import org.cobalt.api.util.ChatUtils
 object PathfinderInit {
 
     fun init() {
-        // Register path command
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             dispatcher.register(PathCommand.register())
         }
 
-        // Register path renderer with EventBus
         EventBus.register(PathRenderer)
 
         ChatUtils.sendMessage("§aPathfinder system initialized!")

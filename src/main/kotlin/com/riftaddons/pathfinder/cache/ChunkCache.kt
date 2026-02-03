@@ -8,39 +8,36 @@ import java.util.concurrent.ConcurrentHashMap
 
 object ChunkCache {
     private val mc = Minecraft.getInstance()
-    private val cache = ConcurrentHashMap<Long, CachedChunk>()
-    private const val MAX_CACHE_SIZE = 256
-
-    data class CachedChunk(
-        val chunkX: Int,
-        val chunkZ: Int,
-        val timestamp: Long = System.currentTimeMillis()
-    )
+    private val chunkMap = ConcurrentHashMap<Long, LevelChunk>()
 
     fun getBlockState(pos: BlockPos): BlockState? {
-        val level = mc.level ?: return null
         val chunkX = pos.x shr 4
         val chunkZ = pos.z shr 4
         val key = getChunkKey(chunkX, chunkZ)
 
-        cache[key] = CachedChunk(chunkX, chunkZ)
-
-        if (cache.size > MAX_CACHE_SIZE) {
-            cleanOldEntries()
+        var chunk = chunkMap[key]
+        if (chunk == null) {
+            val level = mc.level ?: return null
+            try {
+                chunk = level.getChunk(chunkX, chunkZ)
+                if (chunk != null) {
+                    chunkMap[key] = chunk
+                }
+            } catch (_: Exception) {
+                return null
+            }
         }
 
-        return try {
-            val chunk = level.getChunk(chunkX, chunkZ)
-            chunk?.getBlockState(pos)
-        } catch (_: Exception) {
-            null
-        }
+        return chunk?.getBlockState(pos)
     }
 
     fun isLoaded(pos: BlockPos): Boolean {
-        val level = mc.level ?: return false
+        // Use cache first if available
         val chunkX = pos.x shr 4
         val chunkZ = pos.z shr 4
+        if (chunkMap.containsKey(getChunkKey(chunkX, chunkZ))) return true
+
+        val level = mc.level ?: return false
         return level.hasChunk(chunkX, chunkZ)
     }
 
@@ -48,13 +45,7 @@ object ChunkCache {
         return (chunkX.toLong() shl 32) or (chunkZ.toLong() and 0xFFFFFFFFL)
     }
 
-    private fun cleanOldEntries() {
-        val sortedEntries = cache.entries.sortedBy { it.value.timestamp }
-        val toRemove = sortedEntries.take(cache.size - MAX_CACHE_SIZE / 2)
-        toRemove.forEach { cache.remove(it.key) }
-    }
-
     fun clear() {
-        cache.clear()
+        chunkMap.clear()
     }
 }

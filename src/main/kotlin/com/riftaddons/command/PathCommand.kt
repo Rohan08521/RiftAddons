@@ -3,6 +3,9 @@ package com.riftaddons.command
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.riftaddons.pathfinder.path.Astar
+import com.riftaddons.pathfinder.config.Costs
+import com.riftaddons.pathfinder.movement.MovementHelper
+import com.riftaddons.pathfinder.cache.ChunkCache
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.Minecraft
@@ -56,17 +59,34 @@ object PathCommand {
 
         Thread {
             try {
-                val pathfinder = Astar(startPos, goalPos)
-                val path = pathfinder.findPath(maxIterations = 50000)
+                // Clear cache before starting new pathfinding
+                MovementHelper.clearCache()
+                ChunkCache.clear()
+                val startTime = System.currentTimeMillis()
+
+                val pathfinder = Astar(startPos, goalPos, maxDistance = 1000)
+                val path = pathfinder.findPath(maxIterations = 100000, timeoutMs = 10000)
+
+                val endTime = System.currentTimeMillis()
+                val timeTaken = endTime - startTime
 
                 mc.execute {
                     if (path != null && path.isNotEmpty()) {
                         currentPath = path
-                        ChatUtils.sendMessage("§aPath found! §e${path.size} §anodes")
-                        ChatUtils.sendMessage("§7Explored: §e${pathfinder.getClosedSetSize()} §7nodes")
+                        ChatUtils.sendMessage("§aPath found! §e${path.size} §anodes §7(smoothed)")
+                        ChatUtils.sendMessage("§7Explored: §e${pathfinder.getNodesExplored()} §7nodes")
+                        ChatUtils.sendMessage("§7Time: §e${timeTaken}ms §7(§e${String.format("%.2f", timeTaken / 1000.0)}s§7)")
+                        if (pathfinder.isTimeoutReached()) {
+                            ChatUtils.sendMessage("§eWarning: Pathfinding timed out, path may not be optimal")
+                        }
                     } else {
                         currentPath = null
-                        ChatUtils.sendMessage("§cNo path found!")
+                        if (pathfinder.isTimeoutReached()) {
+                            ChatUtils.sendMessage("§cNo path found (timed out after ${timeTaken}ms)")
+                        } else {
+                            ChatUtils.sendMessage("§cNo path found!")
+                        }
+                        ChatUtils.sendMessage("§7Explored: §e${pathfinder.getNodesExplored()} §7nodes")
                     }
                 }
             } catch (e: Exception) {
