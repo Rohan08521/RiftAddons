@@ -98,6 +98,7 @@ object PathCommand {
         }.start()
     }
 
+
     private fun clearPath() {
         currentPath = null
         ChatUtils.sendMessage("§aPath cleared!")
